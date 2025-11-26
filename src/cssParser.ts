@@ -56,9 +56,22 @@ export class CSSParser {
   }
 
   /**
-   * Find CSS files in the workspace with smart scoping
+   * Find CSS files in the workspace with configurable scoping
    */
   findCSSFiles(currentFilePath: string): string[] {
+    const config = vscode.workspace.getConfiguration("cssPeakPro");
+    const scopingMode: string = config.get("scopingMode", "smart");
+    const cssFileExtensions: string[] = config.get("cssFileExtensions", [
+      "css",
+      "scss",
+      "sass",
+      "less",
+    ]);
+    const enableFallbackToGlobal: boolean = config.get(
+      "enableFallbackToGlobal",
+      true
+    );
+
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(
       vscode.Uri.file(currentFilePath)
     );
@@ -75,32 +88,47 @@ export class CSSParser {
 
     const cssFiles: string[] = [];
 
-    // Priority 1: Same folder CSS files with matching name
-    const matchingFileInSameFolder = path.join(
-      currentDir,
-      `${currentFileName}.css`
-    );
-    if (fs.existsSync(matchingFileInSameFolder)) {
-      cssFiles.push(matchingFileInSameFolder);
+    if (scopingMode === "global") {
+      // Search entire workspace for CSS files
+      return this.findCSSFilesInWorkspace(workspacePath, cssFileExtensions);
     }
 
-    // Priority 2: Same folder CSS files (any name)
-    const cssFilesInFolder = this.findFilesInDirectory(currentDir, "*.css");
-    cssFiles.push(...cssFilesInFolder.filter((f) => !cssFiles.includes(f)));
-
-    // Priority 3: SCSS/SASS files with matching name
-    const matchingScssInSameFolder = path.join(
-      currentDir,
-      `${currentFileName}.scss`
-    );
-    if (fs.existsSync(matchingScssInSameFolder)) {
-      cssFiles.push(matchingScssInSameFolder);
+    if (scopingMode === "filename") {
+      // Find CSS files with the same name (any extension)
+      for (const ext of cssFileExtensions) {
+        const matchingFile = path.join(currentDir, `${currentFileName}.${ext}`);
+        if (fs.existsSync(matchingFile)) {
+          cssFiles.push(matchingFile);
+        }
+      }
+      return cssFiles;
     }
 
-    const scssFilesInFolder = this.findFilesInDirectory(currentDir, "*.scss");
-    cssFiles.push(...scssFilesInFolder.filter((f) => !cssFiles.includes(f)));
+    if (scopingMode === "folder") {
+      // Find CSS files in the same directory (any name)
+      for (const ext of cssFileExtensions) {
+        const filesInFolder = this.findFilesInDirectory(currentDir, `*.${ext}`);
+        cssFiles.push(...filesInFolder);
+      }
+      return cssFiles;
+    }
 
-    // Priority 4: Common CSS directory patterns
+    // Smart mode (default) - combination with fallback
+    // Priority 1: Same name, same folder (highest priority)
+    for (const ext of cssFileExtensions) {
+      const matchingFile = path.join(currentDir, `${currentFileName}.${ext}`);
+      if (fs.existsSync(matchingFile)) {
+        cssFiles.push(matchingFile);
+      }
+    }
+
+    // Priority 2: Same folder, any name
+    for (const ext of cssFileExtensions) {
+      const filesInFolder = this.findFilesInDirectory(currentDir, `*.${ext}`);
+      cssFiles.push(...filesInFolder.filter((f) => !cssFiles.includes(f)));
+    }
+
+    // Priority 3: Common CSS directory patterns
     const commonPaths = [
       "css",
       "styles",
@@ -111,16 +139,64 @@ export class CSSParser {
     for (const commonPath of commonPaths) {
       const fullPath = path.join(workspacePath, commonPath);
       if (fs.existsSync(fullPath)) {
-        const cssFilesInCommon = this.findFilesInDirectory(fullPath, "*.css");
-        cssFiles.push(...cssFilesInCommon.filter((f) => !cssFiles.includes(f)));
-
-        const scssFilesInCommon = this.findFilesInDirectory(fullPath, "*.scss");
-        cssFiles.push(
-          ...scssFilesInCommon.filter((f) => !cssFiles.includes(f))
-        );
+        for (const ext of cssFileExtensions) {
+          const filesInCommon = this.findFilesInDirectory(fullPath, `*.${ext}`);
+          cssFiles.push(...filesInCommon.filter((f) => !cssFiles.includes(f)));
+        }
       }
     }
 
+    // Priority 4: Fallback to global if enabled and no scoped files found
+    if (enableFallbackToGlobal && cssFiles.length === 0) {
+      const globalFiles = this.findCSSFilesInWorkspace(
+        workspacePath,
+        cssFileExtensions
+      );
+      cssFiles.push(...globalFiles);
+    }
+
+    return cssFiles;
+  }
+
+  /**
+   * Find CSS files throughout the entire workspace
+   */
+  private findCSSFilesInWorkspace(
+    workspacePath: string,
+    cssFileExtensions: string[]
+  ): string[] {
+    const cssFiles: string[] = [];
+
+    // Recursive function to search all directories
+    const searchDirectory = (dir: string): void => {
+      try {
+        const items = fs.readdirSync(dir);
+
+        for (const item of items) {
+          const fullPath = path.join(dir, item);
+          const stat = fs.statSync(fullPath);
+
+          if (stat.isFile()) {
+            // Check if file has CSS extension
+            const ext = path.extname(item).substring(1);
+            if (cssFileExtensions.includes(ext)) {
+              cssFiles.push(fullPath);
+            }
+          } else if (
+            stat.isDirectory() &&
+            !item.startsWith(".") &&
+            item !== "node_modules"
+          ) {
+            // Recursively search subdirectories (excluding hidden and node_modules)
+            searchDirectory(fullPath);
+          }
+        }
+      } catch (error) {
+        // Silently continue if directory cannot be read
+      }
+    };
+
+    searchDirectory(workspacePath);
     return cssFiles;
   }
 
@@ -130,13 +206,13 @@ export class CSSParser {
   private findFilesInDirectory(dir: string, pattern: string): string[] {
     try {
       const files = fs.readdirSync(dir);
+      const extension = pattern.replace("*", "").replace(".", "");
+
       return files
         .filter((file) => {
           const fullPath = path.join(dir, file);
           const stat = fs.statSync(fullPath);
-          return (
-            stat.isFile() && (file.endsWith(".css") || file.endsWith(".scss"))
-          );
+          return stat.isFile() && file.endsWith(`.${extension}`);
         })
         .map((file) => path.join(dir, file));
     } catch {

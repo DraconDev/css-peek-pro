@@ -51,6 +51,32 @@
           "type": "boolean",
           "default": true,
           "description": "Enable CSS hover functionality"
+        },
+        "cssPeakPro.scopingMode": {
+          "type": "string",
+          "enum": [
+            "global",
+            "folder",
+            "filename",
+            "smart"
+          ],
+          "default": "smart",
+          "description": "CSS scoping mode: global (all files), folder (same directory), filename (same name, any extension), smart (combination with fallback)"
+        },
+        "cssPeakPro.cssFileExtensions": {
+          "type": "array",
+          "default": [
+            "css",
+            "scss",
+            "sass",
+            "less"
+          ],
+          "description": "Array of CSS file extensions to search for"
+        },
+        "cssPeakPro.enableFallbackToGlobal": {
+          "type": "boolean",
+          "default": true,
+          "description": "When no scoped CSS found, fall back to showing global CSS files"
         }
       }
     }
