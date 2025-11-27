@@ -2,7 +2,7 @@
   "name": "css-peak-pro",
   "displayName": "CSS Peak Pro",
   "description": "Enhanced CSS Peak extension with smart scoping that shows only relevant CSS for elements based on configurable modes - Smart, Global, Folder, or Filename matching",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "publisher": "DraconDev",
   "repository": {
     "type": "git",
@@ -81,7 +81,7 @@
             "filename"
           ],
           "default": "smart",
-          "description": "🎯 Scoping Mode: Choose how CSS files are discovered\n• Smart: Smart combination with fallback (recommended)\n• Global: Search entire workspace\n• Folder: Same directory only\n• Filename: Same name files (any extension)"
+          "description": "🎯 Scoping Mode: Choose how CSS files are discovered\n• Smart: Smart combination with fallback (recommended)\n   - Same name files (e.g., index.html → index.css)\n   - Same folder CSS files\n   - Common directories (css/, styles/, src/css/, etc.)\n   - Fallback to global if no scoped files found\n• Global: Search entire workspace\n• Folder: Same directory only\n• Filename: Same name files (any extension)"
         },
         "cssPeakPro.cssFileExtensions": {
           "type": "array",
@@ -92,6 +92,26 @@
             "less"
           ],
           "description": "📁 CSS File Extensions: Which file types to search for\nEnter extensions without the dot, separated by commas\nExample: css,scss,sass,less,styl"
+        },
+        "cssPeakPro.commonDirectories": {
+          "type": "array",
+          "default": [
+            "css",
+            "styles",
+            "src/styles",
+            "src/css",
+            "assets/css"
+          ],
+          "description": "📂 Common Directories: List of directory paths (relative to workspace root) to search for global styles in Smart mode"
+        },
+        "cssPeakPro.fileNamePatterns": {
+          "type": "array",
+          "default": [
+            "${filename}",
+            "${filename}.module",
+            "${filename}.styles"
+          ],
+          "description": "🧩 File Name Patterns: Patterns to match CSS files to source files in Smart/Filename mode. Use ${filename} as placeholder for the source file name (without extension)."
         },
         "cssPeakPro.enableHover": {
           "type": "boolean",
@@ -139,11 +159,6 @@
           "type": "boolean",
           "default": true,
           "description": "🔄 Fallback to Global: When no scoped CSS files found, fall back to searching the entire workspace"
-        },
-        "cssPeakPro.showInStatusBar": {
-          "type": "boolean",
-          "default": false,
-          "description": "📍 Status Bar: Show CSS Peak Pro indicator in the status bar for quick access"
         }
       }
     }

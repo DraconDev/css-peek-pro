@@ -70,21 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     // Initialize configuration and watch for changes
-    const showInStatusBar = config.get("showInStatusBar", false);
-
-    if (showInStatusBar) {
-        // Add status bar item
-        const statusBarItem = vscode.window.createStatusBarItem(
-            vscode.StatusBarAlignment.Right,
-            100
-        );
-        statusBarItem.text = "$(paintcan) CSS Peak Pro";
-        statusBarItem.tooltip =
-            "CSS Peak Pro - Enhanced CSS navigation with smart scoping";
-        statusBarItem.show();
-        context.subscriptions.push(statusBarItem);
-        console.log("CSS Peak Pro: Status bar item added");
-    }
+    // Status bar removed as per user request  }
 
     // Watch for configuration changes to dynamically update language support
     const configurationChange = vscode.workspace.onDidChangeConfiguration(
