@@ -13,96 +13,67 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
     position: vscode.Position,
     token: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.Hover> {
+    console.log(
+      `CSS Peak Pro: Hover triggered in ${document.languageId} at position ${position.line}:${position.character}`
+    );
+
     const config = vscode.workspace.getConfiguration("cssPeakPro");
     const enableHover = config.get("enableHover", true);
 
     if (!enableHover) {
+      console.log("CSS Peak Pro: Hover disabled in settings");
       return null;
     }
 
-    // Implement hover delay
-    const hoverDelay = config.get("hoverDelay", 500);
+    // No delay for debugging
+    const hoverDelay = config.get("hoverDelay", 100);
     return new Promise((resolve) => {
       setTimeout(() => {
+        console.log(
+          `CSS Peak Pro: Processing hover after ${hoverDelay}ms delay`
+        );
+
         // Check if token is cancelled during delay
         if (token.isCancellationRequested) {
+          console.log("CSS Peak Pro: Token cancelled during delay");
           resolve(null);
           return;
         }
 
-        // Try to get the word at position, but also check for HTML attributes
+        // Try to get the word at position
         const range = document.getWordRangeAtPosition(position);
         const word = range ? document.getText(range) : null;
 
+        console.log(`CSS Peak Pro: Found word "${word}" at position`);
+
         if (!word) {
-          // Check if we're on an HTML tag
-          const tagInfo = this.getHTMLTagAtPosition(document, position);
-          if (!tagInfo) {
-            resolve(null);
-            return;
-          }
-
-          if (!this.isPotentialSelector(tagInfo.selector)) {
-            resolve(null);
-            return;
-          }
-
-          const cssRules = this.cssParser.getCSSRulesForSelector(
-            tagInfo.selector,
-            document.uri.fsPath
-          );
-
-          if (cssRules.length === 0) {
-            resolve(null);
-            return;
-          }
-
-          const maxRules = config.get("maxRulesToShow", 10);
-          const relevantRules = cssRules.slice(0, maxRules);
-          const hoverContent = this.createHoverContent(
-            relevantRules,
-            tagInfo.selector
-          );
-
-          resolve(new vscode.Hover(hoverContent, tagInfo.range));
+          console.log("CSS Peak Pro: No word found at position");
+          resolve(null);
           return;
         }
 
         // Only provide hover for potential CSS selectors
         if (!this.isPotentialSelector(word)) {
+          console.log(
+            `CSS Peak Pro: "${word}" not recognized as potential selector`
+          );
           resolve(null);
           return;
         }
 
-        // Enhanced multi-word detection for compound selectors
-        const enhancedSelectors = this.getEnhancedSelectors(
-          word,
-          document,
-          position
-        );
+        console.log(`CSS Peak Pro: Processing CSS for "${word}"`);
 
         const cssRules = this.cssParser.getCSSRulesForSelector(
           word,
           document.uri.fsPath
         );
 
-        // Also search for additional selectors if multi-word detection is enabled
-        const enableMultiWordDetection = config.get(
-          "enableMultiWordDetection",
-          true
+        console.log(
+          `CSS Peak Pro: Found ${cssRules.length} CSS rules for "${word}"`
         );
-        if (enableMultiWordDetection && enhancedSelectors.length > 1) {
-          for (const selector of enhancedSelectors.slice(1)) {
-            // Skip the original word
-            const additionalRules = this.cssParser.getCSSRulesForSelector(
-              selector,
-              document.uri.fsPath
-            );
-            cssRules.push(...additionalRules);
-          }
-        }
 
         if (cssRules.length === 0) {
+          console.log("CSS Peak Pro: No CSS rules found");
           resolve(null);
           return;
         }
@@ -111,6 +82,7 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
         const relevantRules = cssRules.slice(0, maxRules);
 
         const hoverContent = this.createHoverContent(relevantRules, word);
+        console.log("CSS Peak Pro: Created hover content");
 
         resolve(new vscode.Hover(hoverContent, range));
       }, hoverDelay);
@@ -118,146 +90,36 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
   }
 
   /**
-   * Get HTML tag information at a specific position
-   */
-  private getHTMLTagAtPosition(
-    document: vscode.TextDocument,
-    position: vscode.Position
-  ): { selector: string; range: vscode.Range } | null {
-    const line = document.lineAt(position.line).text;
-    const lineText = line.trim();
-
-    // Check if this is an HTML tag
-    const tagMatch = lineText.match(/<([a-zA-Z][a-zA-Z0-9]*)/);
-    if (!tagMatch) {
-      return null;
-    }
-
-    const tagName = tagMatch[1];
-
-    // Check if we're hovering over the tag name itself
-    const tagStartIndex = lineText.indexOf(`<${tagName}`);
-    const tagEndIndex = tagStartIndex + tagName.length;
-
-    // Create a range for the tag
-    const tagStart = new vscode.Position(position.line, tagStartIndex + 1); // +1 to skip '<'
-    const tagEnd = new vscode.Position(position.line, tagEndIndex);
-
-    return {
-      selector: tagName,
-      range: new vscode.Range(tagStart, tagEnd),
-    };
-  }
-
-  /**
-   * Enhanced selector detection with multi-word support
-   */
-  private getEnhancedSelectors(
-    word: string,
-    document: vscode.TextDocument,
-    position: vscode.Position
-  ): string[] {
-    const selectors = [word]; // Always include the original word
-    const enableMultiWordDetection = vscode.workspace
-      .getConfiguration("cssPeakPro")
-      .get("enableMultiWordDetection", true);
-
-    if (!enableMultiWordDetection) {
-      return selectors;
-    }
-
-    // Look for common prefix/suffix patterns that might indicate related classes
-    // For example: "btn-primary" might have related "btn" or "primary" rules
-
-    // Split by common separators but keep the full word
-    const cleanWord = word.replace(/^[.#]/, ""); // Remove . or # prefix
-
-    // Look for hyphenated compounds (keep as single entity)
-    if (cleanWord.includes("-")) {
-      const parts = cleanWord.split("-");
-
-      // Add each part as potential selector if they look like CSS classes
-      for (const part of parts) {
-        if (part.length > 2 && /^[a-zA-Z][a-zA-Z0-9]*$/.test(part)) {
-          // Avoid common words that might give false positives
-          const commonWords = [
-            "the",
-            "and",
-            "for",
-            "with",
-            "from",
-            "this",
-            "that",
-          ];
-          if (!commonWords.includes(part.toLowerCase())) {
-            selectors.push(`.${part}`);
-          }
-        }
-      }
-    }
-
-    return selectors;
-  }
-
-  /**
-   * Check if the word is a potential CSS selector
+   * Check if the word is a potential CSS selector - SIMPLIFIED VERSION
    */
   private isPotentialSelector(word: string): boolean {
-    // Class selectors
+    console.log(`CSS Peak Pro: Checking if "${word}" is a potential selector`);
+
+    // Class selectors (starts with .)
     if (word.startsWith(".")) {
+      console.log(`CSS Peak Pro: "${word}" is a class selector`);
       return true;
     }
 
-    // ID selectors
+    // ID selectors (starts with #)
     if (word.startsWith("#")) {
+      console.log(`CSS Peak Pro: "${word}" is an ID selector`);
       return true;
     }
 
-    // HTML elements
-    const commonElements = [
-      "div",
-      "span",
-      "p",
-      "h1",
-      "h2",
-      "h3",
-      "h4",
-      "h5",
-      "h6",
-      "button",
-      "input",
-      "form",
-      "nav",
-      "header",
-      "footer",
-      "main",
-      "section",
-      "article",
-      "aside",
-      "ul",
-      "li",
-      "ol",
-      "a",
-      "img",
-      "table",
-      "tr",
-      "td",
-      "th",
-      "div",
-      "span",
-      "strong",
-      "em",
-    ];
-
-    if (commonElements.includes(word.toLowerCase())) {
+    // HTML elements - be more permissive
+    if (/^[a-zA-Z][a-zA-Z0-9]*$/.test(word)) {
+      console.log(`CSS Peak Pro: "${word}" is a valid element name`);
       return true;
     }
 
-    // Custom elements or components (PascalCase or kebab-case)
-    if (/^[A-Z][a-zA-Z]*$/.test(word) || /^[a-z]+(-[a-z]+)*$/.test(word)) {
+    // Custom elements or components (PascalCase)
+    if (/^[A-Z][a-zA-Z]*$/.test(word)) {
+      console.log(`CSS Peak Pro: "${word}" is a PascalCase component`);
       return true;
     }
 
+    console.log(`CSS Peak Pro: "${word}" not recognized as potential selector`);
     return false;
   }
 
