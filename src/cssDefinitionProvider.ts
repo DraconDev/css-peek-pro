@@ -24,10 +24,10 @@ export class CSSDefinitionProvider implements vscode.DefinitionProvider {
         }
 
         // Only provide definitions for potential CSS selectors
-        if (!this.isPotentialSelector(word)) {
-            return null;
-        }
-
+        // We skip the strict check here and let the parser decide if it finds anything
+        // if (!this.isPotentialSelector(word)) {
+        //   return null;
+        // }
         const cssRules = this.cssParser.getCSSRulesForSelector(
             word,
             document.uri.fsPath
@@ -70,126 +70,6 @@ export class CSSDefinitionProvider implements vscode.DefinitionProvider {
         );
 
         return definitions;
-    }
-
-    /**
-     * Check if the word is a potential CSS selector
-     */
-    private isPotentialSelector(word: string): boolean {
-        // Class selectors
-        if (word.startsWith(".")) {
-            return true;
-        }
-
-        // ID selectors
-        if (word.startsWith("#")) {
-            return true;
-        }
-
-        // HTML elements
-        const commonElements = [
-            "div",
-            "span",
-            "p",
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "h6",
-            "button",
-            "input",
-            "form",
-            "nav",
-            "header",
-            "footer",
-            "main",
-            "section",
-            "article",
-            "aside",
-            "ul",
-            "li",
-            "ol",
-            "a",
-            "img",
-            "table",
-            "tr",
-            "td",
-            "th",
-            "div",
-            "span",
-            "strong",
-            "em",
-        ];
-
-        if (commonElements.includes(word.toLowerCase())) {
-            return true;
-        }
-
-        // Custom elements or components (PascalCase or kebab-case)
-        if (/^[A-Z][a-zA-Z]*$/.test(word) || /^[a-z]+(-[a-z]+)*$/.test(word)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if a CSS selector matches the given element selector
-     */
-    private selectorMatches(
-        cssSelector: string,
-        elementSelector: string
-    ): boolean {
-        const cleanCssSelector = cssSelector.toLowerCase().trim();
-        const cleanElementSelector = elementSelector.toLowerCase().trim();
-
-        // Exact match
-        if (cleanCssSelector === cleanElementSelector) {
-            return true;
-        }
-
-        // Class selector matching
-        const classMatches = cleanElementSelector.match(/\.([a-zA-Z0-9-_]+)/g);
-        if (classMatches) {
-            for (const classMatch of classMatches) {
-                const className = classMatch.substring(1);
-                if (
-                    cleanCssSelector.includes(`.${className}`) ||
-                    cleanCssSelector.includes(`[class*="${className}"]`) ||
-                    cleanCssSelector.includes(`[class~="${className}"]`)
-                ) {
-                    return true;
-                }
-            }
-        }
-
-        // ID selector matching
-        const idMatches = cleanElementSelector.match(/#([a-zA-Z0-9-_]+)/g);
-        if (idMatches) {
-            for (const idMatch of idMatches) {
-                const idName = idMatch.substring(1);
-                if (cleanCssSelector.includes(`#${idName}`)) {
-                    return true;
-                }
-            }
-        }
-
-        // Element selector matching
-        const elementMatch = cleanElementSelector.match(
-            /^([a-zA-Z][a-zA-Z0-9]*)/
-        );
-        if (elementMatch) {
-            const elementName = elementMatch[1];
-            if (
-                cleanCssSelector.includes(elementName) &&
-                !cleanCssSelector.includes(".")
-            ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
