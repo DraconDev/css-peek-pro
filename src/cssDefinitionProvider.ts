@@ -193,21 +193,45 @@ export class CSSDefinitionProvider implements vscode.DefinitionProvider {
       const content = fs.readFileSync(filePath, "utf8");
       const lines = content.split("\n");
 
-      // Look for the selector (handle multi-line selectors)
-      const selectorPattern = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const regex = new RegExp(`\\s*${selectorPattern}\\s*[{#]`, "i");
+      // Clean selector (remove class/id prefixes for better matching)
+      const cleanSelector = selector.replace(/^[.#]/, "");
+
+      // Look for the selector pattern in CSS rules
+      // Pattern: selector followed by { or space or comma
+      const selectorPattern = cleanSelector.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&"
+      );
+      const regex = new RegExp(
+        `\\s*${selectorPattern}\\s*[{#,)]|\\s*${selectorPattern}\\s*\\{`,
+        "i"
+      );
 
       for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
+        const line = lines[i].trim();
         if (regex.test(line)) {
           return i;
         }
       }
 
-      // If exact match not found, try partial match
+      // If exact match not found, try partial match for compound selectors
+      if (cleanSelector.includes("-")) {
+        const parts = cleanSelector.split("-");
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          // Check if any part of the compound selector exists
+          for (const part of parts) {
+            if (line.includes(`.${part}`) || line.includes(`#${part}`)) {
+              return i;
+            }
+          }
+        }
+      }
+
+      // Fallback: check if the selector text appears in the file
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        if (line.includes(selector)) {
+        if (line.includes(cleanSelector)) {
           return i;
         }
       }
