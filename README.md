@@ -180,22 +180,6 @@ Now `HomePage.tsx` will also check for `HomePage-styles.css`!
 
 Smart mode will now also search these custom directories.
 
-### Example 4: Adding Language Support
-
-Want CSS peeking in your template language?
-
-```json
-{
-    "cssPeakPro.peekFromLanguages": [
-        "html",
-        "javascript",
-        "typescript",
-        "rust",
-        "myCustomLanguage" // ← Add your language ID here!
-    ]
-}
-```
-
 ## Tips
 
 -   **Performance**: Use `folder` or `filename` mode for very large projects
