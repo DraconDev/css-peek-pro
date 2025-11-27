@@ -90,11 +90,20 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
   }
 
   /**
-   * Check if the word is a potential CSS selector - SIMPLIFIED VERSION
+   * Check if the word is a potential CSS selector - SUPER PERMISSIVE like CSS Peak
    */
   private isPotentialSelector(word: string): boolean {
     console.log(`CSS Peak Pro: Checking if "${word}" is a potential selector`);
 
+    // Always return true for debugging - let the CSS parser decide if it matches
+    // This is how CSS Peak works - it's very permissive
+    console.log(
+      `CSS Peak Pro: "${word}" accepted as potential selector (permissive mode)`
+    );
+    return true;
+
+    // Original logic (commented out for now):
+    /*
     // Class selectors (starts with .)
     if (word.startsWith(".")) {
       console.log(`CSS Peak Pro: "${word}" is a class selector`);
@@ -107,7 +116,7 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
       return true;
     }
 
-    // HTML elements - be more permissive
+    // HTML elements - be very permissive
     if (/^[a-zA-Z][a-zA-Z0-9]*$/.test(word)) {
       console.log(`CSS Peak Pro: "${word}" is a valid element name`);
       return true;
@@ -121,6 +130,7 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
 
     console.log(`CSS Peak Pro: "${word}" not recognized as potential selector`);
     return false;
+    */
   }
 
   /**

@@ -2,7 +2,7 @@
   "name": "css-peak-pro",
   "displayName": "CSS Peak Pro",
   "description": "Enhanced CSS Peak extension with smart scoping that shows only relevant CSS for elements based on configurable modes - Smart, Global, Folder, or Filename matching",
-  "version": "1.0.13",
+  "version": "1.0.8",
   "publisher": "DraconDev",
   "repository": {
     "type": "git",
@@ -23,29 +23,54 @@
     "workspaceContains:**/*.css",
     "workspaceContains:**/*.scss",
     "workspaceContains:**/*.sass",
-    "workspaceContains:**/*.less",
-    "onCommand:cssPeakPro.showCSS"
+    "workspaceContains:**/*.less"
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "cssPeakPro.showCSS",
-        "title": "Show CSS for this element"
-      }
-    ],
-    "keybindings": [
-      {
-        "command": "cssPeakPro.showCSS",
-        "key": "ctrl+shift+c",
-        "mac": "cmd+shift+c",
-        "when": "editorTextFocus"
-      }
-    ],
     "configuration": {
       "type": "object",
       "title": "CSS Peak Pro Settings",
       "properties": {
+        "cssPeakPro.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "🎯 Enable CSS Peak Pro: Turn on/off the extension functionality"
+        },
+        "cssPeakPro.peekFromLanguages": {
+          "type": "array",
+          "default": [
+            "html",
+            "django-html",
+            "laravel-blade",
+            "razor",
+            "vue",
+            "blade",
+            "pug",
+            "jade",
+            "handlebars",
+            "php",
+            "twig",
+            "md",
+            "nunjucks",
+            "javascript",
+            "javascriptreact",
+            "erb",
+            "typescript",
+            "typescriptreact",
+            "HTML (Eex)",
+            "html-eex",
+            "ejs",
+            "hbs",
+            "svelte",
+            "rust"
+          ],
+          "description": "🔤 Supported Languages: List of VSCode language names where CSS peaking should work"
+        },
+        "cssPeakPro.supportTags": {
+          "type": "boolean",
+          "default": true,
+          "description": "🏷️ Support HTML Tags: Enable CSS peaking from HTML tags in addition to classes and IDs"
+        },
         "cssPeakPro.scopingMode": {
           "type": "string",
           "enum": [
@@ -116,7 +141,7 @@
         },
         "cssPeakPro.showInStatusBar": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "📍 Status Bar: Show CSS Peak Pro indicator in the status bar for quick access"
         }
       }
