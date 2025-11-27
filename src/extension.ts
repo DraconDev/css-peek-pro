@@ -21,27 +21,13 @@ export function activate(context: vscode.ExtensionContext) {
   const cssParser = new CSSParser();
   console.log("CSS Peak Pro: CSS parser initialized");
 
-  // Get supported languages from configuration
-  const supportedLanguages: string[] = config.get("peekFromLanguages", [
-    "html",
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "vue",
-    "rust",
-  ]);
-  console.log(
-    `CSS Peak Pro: Registered for languages: ${supportedLanguages.join(", ")}`
-  );
-
-  // Register the hover provider for supported languages
+  // Register the hover provider for ALL languages (like CSS Peak does)
   const hoverProvider = new CSSPeakProProvider(cssParser);
   const hoverProviderRegistration = vscode.languages.registerHoverProvider(
-    supportedLanguages,
+    "*", // ALL languages
     hoverProvider
   );
-  console.log("CSS Peak Pro: Hover provider registered");
+  console.log("CSS Peak Pro: Hover provider registered for all languages");
 
   // Register the definition provider for Ctrl+Click go-to-definition (configurable)
   const enableGoToDefinition = config.get("enableGoToDefinition", true);
@@ -55,10 +41,12 @@ export function activate(context: vscode.ExtensionContext) {
     const definitionProvider = new CSSDefinitionProvider(cssParser);
     definitionProviderRegistration =
       vscode.languages.registerDefinitionProvider(
-        supportedLanguages,
+        "*", // ALL languages
         definitionProvider
       );
-    console.log("CSS Peak Pro: Definition provider registered");
+    console.log(
+      "CSS Peak Pro: Definition provider registered for all languages"
+    );
   } else {
     console.log("CSS Peak Pro: Definition provider disabled");
   }
@@ -96,11 +84,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(configurationChange);
 
-  console.log(
-    `CSS Peak Pro activated successfully for languages: ${supportedLanguages.join(
-      ", "
-    )}`
-  );
+  console.log(`CSS Peak Pro activated successfully for ALL languages`);
 }
 
 export function deactivate() {
