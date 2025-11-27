@@ -6,6 +6,7 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
 
   constructor(cssParser: CSSParser) {
     this.cssParser = cssParser;
+    console.log("CSS Peak Pro: CSSPeakProProvider constructed");
   }
 
   provideHover(
@@ -13,124 +14,67 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
     position: vscode.Position,
     token: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.Hover> {
-    console.log(
-      `CSS Peak Pro: Hover triggered in ${document.languageId} at position ${position.line}:${position.character}`
-    );
+    console.log("=== CSS Peak Pro: HOVER TRIGGERED ===");
+    console.log(`Document: ${document.fileName}`);
+    console.log(`Language: ${document.languageId}`);
+    console.log(`Position: line ${position.line}, char ${position.character}`);
 
     const config = vscode.workspace.getConfiguration("cssPeakPro");
     const enableHover = config.get("enableHover", true);
+    console.log(`Hover enabled: ${enableHover}`);
 
     if (!enableHover) {
-      console.log("CSS Peak Pro: Hover disabled in settings");
+      console.log("CSS Peak Pro: Hover is disabled");
       return null;
     }
 
-    // No delay for debugging
-    const hoverDelay = config.get("hoverDelay", 100);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log(
-          `CSS Peak Pro: Processing hover after ${hoverDelay}ms delay`
-        );
+    // Get the word at the current position
+    const range = document.getWordRangeAtPosition(position);
+    if (!range) {
+      console.log("CSS Peak Pro: No word found at position");
+      return null;
+    }
 
-        // Check if token is cancelled during delay
-        if (token.isCancellationRequested) {
-          console.log("CSS Peak Pro: Token cancelled during delay");
-          resolve(null);
-          return;
-        }
-
-        // Try to get the word at position
-        const range = document.getWordRangeAtPosition(position);
-        const word = range ? document.getText(range) : null;
-
-        console.log(`CSS Peak Pro: Found word "${word}" at position`);
-
-        if (!word) {
-          console.log("CSS Peak Pro: No word found at position");
-          resolve(null);
-          return;
-        }
-
-        // Only provide hover for potential CSS selectors
-        if (!this.isPotentialSelector(word)) {
-          console.log(
-            `CSS Peak Pro: "${word}" not recognized as potential selector`
-          );
-          resolve(null);
-          return;
-        }
-
-        console.log(`CSS Peak Pro: Processing CSS for "${word}"`);
-
-        const cssRules = this.cssParser.getCSSRulesForSelector(
-          word,
-          document.uri.fsPath
-        );
-
-        console.log(
-          `CSS Peak Pro: Found ${cssRules.length} CSS rules for "${word}"`
-        );
-
-        if (cssRules.length === 0) {
-          console.log("CSS Peak Pro: No CSS rules found");
-          resolve(null);
-          return;
-        }
-
-        const maxRules = config.get("maxRulesToShow", 10);
-        const relevantRules = cssRules.slice(0, maxRules);
-
-        const hoverContent = this.createHoverContent(relevantRules, word);
-        console.log("CSS Peak Pro: Created hover content");
-
-        resolve(new vscode.Hover(hoverContent, range));
-      }, hoverDelay);
-    });
-  }
-
-  /**
-   * Check if the word is a potential CSS selector - SUPER PERMISSIVE like CSS Peak
-   */
-  private isPotentialSelector(word: string): boolean {
-    console.log(`CSS Peak Pro: Checking if "${word}" is a potential selector`);
-
-    // Always return true for debugging - let the CSS parser decide if it matches
-    // This is how CSS Peak works - it's very permissive
+    const word = document.getText(range);
+    console.log(`CSS Peak Pro: Found word: "${word}"`);
+    console.log(`Word length: ${word.length}`);
     console.log(
-      `CSS Peak Pro: "${word}" accepted as potential selector (permissive mode)`
+      `Word chars: ${word
+        .split("")
+        .map((c) => c.charCodeAt(0))
+        .join(",")}`
     );
-    return true;
 
-    // Original logic (commented out for now):
-    /*
-    // Class selectors (starts with .)
-    if (word.startsWith(".")) {
-      console.log(`CSS Peak Pro: "${word}" is a class selector`);
-      return true;
+    if (!word || word.length === 0) {
+      console.log("CSS Peak Pro: Empty word");
+      return null;
     }
 
-    // ID selectors (starts with #)
-    if (word.startsWith("#")) {
-      console.log(`CSS Peak Pro: "${word}" is an ID selector`);
-      return true;
+    // Very permissive CSS detection - accept anything that looks like text
+    console.log(
+      "CSS Peak Pro: ACCEPTING as potential CSS selector (testing mode)"
+    );
+
+    console.log(`CSS Peak Pro: Getting CSS rules for "${word}"`);
+
+    const cssRules = this.cssParser.getCSSRulesForSelector(
+      word,
+      document.uri.fsPath
+    );
+
+    console.log(`CSS Peak Pro: Found ${cssRules.length} CSS rules`);
+
+    if (cssRules.length === 0) {
+      console.log("CSS Peak Pro: No CSS rules found, returning null");
+      return null;
     }
 
-    // HTML elements - be very permissive
-    if (/^[a-zA-Z][a-zA-Z0-9]*$/.test(word)) {
-      console.log(`CSS Peak Pro: "${word}" is a valid element name`);
-      return true;
-    }
+    console.log("CSS Peak Pro: Creating hover content...");
+    const hoverContent = this.createHoverContent(cssRules, word);
+    console.log("CSS Peak Pro: Hover content created");
 
-    // Custom elements or components (PascalCase)
-    if (/^[A-Z][a-zA-Z]*$/.test(word)) {
-      console.log(`CSS Peak Pro: "${word}" is a PascalCase component`);
-      return true;
-    }
-
-    console.log(`CSS Peak Pro: "${word}" not recognized as potential selector`);
-    return false;
-    */
+    console.log("=== CSS Peak Pro: RETURNING HOVER ===");
+    return new vscode.Hover(hoverContent, range);
   }
 
   /**
@@ -158,20 +102,6 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
         content.appendText("\n");
       }
     });
-
-    if (
-      rules.length >=
-      vscode.workspace.getConfiguration("cssPeakPro").get("maxRulesToShow", 10)
-    ) {
-      content.appendText(
-        `\n... and ${
-          rules.length -
-          vscode.workspace
-            .getConfiguration("cssPeakPro")
-            .get("maxRulesToShow", 10)
-        } more rules`
-      );
-    }
 
     return content;
   }
