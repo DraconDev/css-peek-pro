@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { CSSDefinitionProvider } from "./cssDefinitionProvider";
 import { CSSParser } from "./cssParser";
 import { CSSPeakProProvider } from "./cssPeakProProvider";
 
@@ -10,11 +11,18 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Register the hover provider for supported languages
   const hoverProvider = new CSSPeakProProvider(cssParser);
-
   const hoverProviderRegistration = vscode.languages.registerHoverProvider(
     ["html", "jsx", "tsx", "vue", "rust"],
     hoverProvider
   );
+
+  // Register the definition provider for Ctrl+Click go-to-definition
+  const definitionProvider = new CSSDefinitionProvider(cssParser);
+  const definitionProviderRegistration =
+    vscode.languages.registerDefinitionProvider(
+      ["html", "jsx", "tsx", "vue", "rust"],
+      definitionProvider
+    );
 
   // Register the command
   const command = vscode.commands.registerCommand("cssPeakPro.showCSS", () => {
@@ -38,6 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Add disposables to context
   context.subscriptions.push(hoverProviderRegistration);
+  context.subscriptions.push(definitionProviderRegistration);
   context.subscriptions.push(command);
 
   // Initialize configuration
