@@ -1,5 +1,4 @@
-```javascript
-const Module = require('module');
+const Module = require("module");
 const originalRequire = Module.prototype.require;
 
 // Mock VSCode workspace configuration
@@ -29,8 +28,8 @@ const mockVscode = {
 };
 
 // Intercept require calls to return mock vscode
-Module.prototype.require = function(path) {
-    if (path === 'vscode') {
+Module.prototype.require = function (path) {
+    if (path === "vscode") {
         return mockVscode;
     }
     return originalRequire.apply(this, arguments);
@@ -40,7 +39,7 @@ const { CSSParser } = require("./out/cssParser");
 const path = require("path");
 const fs = require("fs");
 
-global.vscode = mockVscode; // Changed from 'vscode' to 'mockVscode' to ensure correctness
+global.vscode = mockVscode;
 
 function testConfiguration() {
     const parser = new CSSParser();
@@ -68,16 +67,12 @@ function testConfiguration() {
         console.log("Testing Configuration Logic...");
 
         const foundFiles = parser.findCSSFiles(path.join(testDir, "test.html"));
-        console.log(
-            "Found CSS files:",
-            foundFiles.map((f) => path.basename(f))
-        );
+        const foundBaseNames = foundFiles.map((f) => path.basename(f));
+        console.log("Found CSS files:", foundBaseNames);
 
-        const foundStyles = foundFiles.some((f) =>
-            f.endsWith("test.styles.css")
-        );
-        const foundGlobal = foundFiles.some((f) => f.endsWith("global.css"));
-        const foundOther = foundFiles.some((f) => f.endsWith("other.css"));
+        const foundStyles = foundBaseNames.includes("test.styles.css");
+        const foundGlobal = foundBaseNames.includes("global.css");
+        const foundOther = foundBaseNames.includes("other.css");
 
         console.log(
             `1. Found 'test.styles.css' (Pattern Match): ${foundStyles} (Expected: true)`
