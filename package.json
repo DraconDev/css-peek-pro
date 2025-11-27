@@ -2,7 +2,7 @@
   "name": "css-peak-pro",
   "displayName": "CSS Peak Pro",
   "description": "Enhanced CSS Peak extension with smart scoping that shows only relevant CSS for elements based on configurable modes - Smart, Global, Folder, or Filename matching",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "DraconDev",
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
     "onLanguage:html",
     "onLanguage:jsx",
     "onLanguage:tsx",
-    "onLanguage:vue"
+    "onLanguage:vue",
+    "onLanguage:rust"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -72,6 +73,33 @@
           "default": true,
           "description": "🖱️ Enable Hover: Show CSS properties when hovering over elements, classes, and IDs"
         },
+        "cssPeakPro.hoverDelay": {
+          "type": "number",
+          "default": 500,
+          "description": "⏱️ Hover Delay: Delay in milliseconds before showing hover tooltip (0-2000ms, recommended: 300-800ms)"
+        },
+        "cssPeakPro.scanDepth": {
+          "type": "number",
+          "default": 10,
+          "description": "🔍 Scan Depth: Maximum directory depth to search for CSS files (1-20, higher = more files but slower)"
+        },
+        "cssPeakPro.excludeDirectories": {
+          "type": "array",
+          "default": [
+            "node_modules",
+            ".git",
+            "target",
+            "dist",
+            "build",
+            ".vscode"
+          ],
+          "description": "🚫 Excluded Directories: Directories to exclude from CSS file scanning\nExample: node_modules,.git,target,dist,build"
+        },
+        "cssPeakPro.enableMultiWordDetection": {
+          "type": "boolean",
+          "default": true,
+          "description": "🔤 Multi-word Detection: Enable detection of compound CSS selectors like 'card-title' and 'btn-primary'"
+        },
         "cssPeakPro.maxRulesToShow": {
           "type": "number",
           "default": 10,
@@ -115,6 +143,7 @@
     "html",
     "react",
     "vue",
+    "rust",
     "css-peak",
     "scoped-css",
     "css-navigation",

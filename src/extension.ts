@@ -12,7 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
   const hoverProvider = new CSSPeakProProvider(cssParser);
 
   const hoverProviderRegistration = vscode.languages.registerHoverProvider(
-    ["html", "jsx", "tsx", "vue"],
+    ["html", "jsx", "tsx", "vue", "rust"],
     hoverProvider
   );
 
