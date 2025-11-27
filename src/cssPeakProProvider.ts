@@ -92,7 +92,9 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
 
         rules.forEach((rule, index) => {
             const fileName = rule.filePath.split(/[\\/]/).pop();
-            content.appendText(`📁 ${fileName}\n`);
+            // Fancy header with file icon and name in bold
+            content.appendText(`___\n`);
+            content.appendText(`### 🎨 **${fileName}**\n`);
 
             // Create a CSS block for the rule
             let cssBlock = `${rule.selector} {\n`;
@@ -102,11 +104,10 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
             cssBlock += `}`;
 
             content.appendCodeblock(cssBlock, "css");
-
-            if (index < rules.length - 1) {
-                content.appendText("\n---\n\n");
-            }
         });
+
+        content.appendText(`___\n`);
+        content.appendText(`_CSS Peak Pro_ $(telescope)`);
 
         return content;
     }
