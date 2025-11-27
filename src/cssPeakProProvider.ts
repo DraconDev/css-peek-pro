@@ -15,13 +15,13 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
   ): vscode.ProviderResult<vscode.Hover> {
     const config = vscode.workspace.getConfiguration("cssPeakPro");
     const enableHover = config.get("enableHover", true);
-    const hoverDelay = config.get("hoverDelay", 500);
 
     if (!enableHover) {
       return null;
     }
 
     // Implement hover delay
+    const hoverDelay = config.get("hoverDelay", 500);
     return new Promise((resolve) => {
       setTimeout(() => {
         // Check if token is cancelled during delay
@@ -30,15 +30,41 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
           return;
         }
 
+        // Try to get the word at position, but also check for HTML attributes
         const range = document.getWordRangeAtPosition(position);
-        if (!range) {
-          resolve(null);
-          return;
-        }
+        const word = range ? document.getText(range) : null;
 
-        const word = document.getText(range);
         if (!word) {
-          resolve(null);
+          // Check if we're on an HTML tag
+          const tagInfo = this.getHTMLTagAtPosition(document, position);
+          if (!tagInfo) {
+            resolve(null);
+            return;
+          }
+
+          if (!this.isPotentialSelector(tagInfo.selector)) {
+            resolve(null);
+            return;
+          }
+
+          const cssRules = this.cssParser.getCSSRulesForSelector(
+            tagInfo.selector,
+            document.uri.fsPath
+          );
+
+          if (cssRules.length === 0) {
+            resolve(null);
+            return;
+          }
+
+          const maxRules = config.get("maxRulesToShow", 10);
+          const relevantRules = cssRules.slice(0, maxRules);
+          const hoverContent = this.createHoverContent(
+            relevantRules,
+            tagInfo.selector
+          );
+
+          resolve(new vscode.Hover(hoverContent, tagInfo.range));
           return;
         }
 
@@ -92,51 +118,35 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
   }
 
   /**
-   * Show CSS for a specific selection
+   * Get HTML tag information at a specific position
    */
-  showCSSForSelection(selector: string, position: vscode.Position): void {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      return;
+  private getHTMLTagAtPosition(
+    document: vscode.TextDocument,
+    position: vscode.Position
+  ): { selector: string; range: vscode.Range } | null {
+    const line = document.lineAt(position.line).text;
+    const lineText = line.trim();
+
+    // Check if this is an HTML tag
+    const tagMatch = lineText.match(/<([a-zA-Z][a-zA-Z0-9]*)/);
+    if (!tagMatch) {
+      return null;
     }
 
-    const document = editor.document;
-    const cssRules = this.cssParser.getCSSRulesForSelector(
-      selector,
-      document.uri.fsPath
-    );
+    const tagName = tagMatch[1];
 
-    if (cssRules.length === 0) {
-      vscode.window.showInformationMessage(
-        `No CSS rules found for "${selector}"`
-      );
-      return;
-    }
+    // Check if we're hovering over the tag name itself
+    const tagStartIndex = lineText.indexOf(`<${tagName}`);
+    const tagEndIndex = tagStartIndex + tagName.length;
 
-    const config = vscode.workspace.getConfiguration("cssPeakPro");
-    const maxRules = config.get("maxRulesToShow", 10);
-    const relevantRules = cssRules.slice(0, maxRules);
+    // Create a range for the tag
+    const tagStart = new vscode.Position(position.line, tagStartIndex + 1); // +1 to skip '<'
+    const tagEnd = new vscode.Position(position.line, tagEndIndex);
 
-    const content = this.createDetailedContent(relevantRules, selector);
-
-    // Create and show a new hover-like display
-    const hover = new vscode.Hover(
-      content,
-      new vscode.Range(position, position)
-    );
-    vscode.languages.registerHoverProvider(["html", "jsx", "tsx", "vue"], {
-      provideHover: () => hover,
-    });
-
-    // Show in a new tab for better visibility
-    const panel = vscode.window.createWebviewPanel(
-      "cssPeakPro",
-      `CSS Rules for "${selector}"`,
-      vscode.ViewColumn.Beside,
-      {}
-    );
-
-    panel.webview.html = this.createWebviewContent(relevantRules, selector);
+    return {
+      selector: tagName,
+      range: new vscode.Range(tagStart, tagEnd),
+    };
   }
 
   /**
@@ -292,157 +302,5 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
     }
 
     return content;
-  }
-
-  /**
-   * Create detailed content for command-based display
-   */
-  private createDetailedContent(
-    rules: CSSRule[],
-    selector: string
-  ): vscode.MarkdownString {
-    const content = new vscode.MarkdownString();
-
-    content.appendText(`# CSS Peak Pro - Rules for "${selector}"\n\n`);
-    content.appendText(`Found ${rules.length} CSS rule(s):\n\n`);
-
-    rules.forEach((rule, index) => {
-      const fileName = rule.filePath.split(/[\\/]/).pop();
-      const relativePath = vscode.workspace.asRelativePath(rule.filePath);
-
-      content.appendText(`## Rule ${index + 1}\n`);
-      content.appendText(`**File:** \`${relativePath}\`\n`);
-      content.appendText(`**Selector:** \`${rule.selector}\`\n\n`);
-
-      content.appendText("**Properties:**\n");
-      content.appendText("```css\n");
-      Object.entries(rule.properties).forEach(([property, value]) => {
-        content.appendText(`${property}: ${value};\n`);
-      });
-      content.appendText("```\n\n");
-
-      if (index < rules.length - 1) {
-        content.appendText("---\n\n");
-      }
-    });
-
-    return content;
-  }
-
-  /**
-   * Create webview content for detailed display
-   */
-  private createWebviewContent(rules: CSSRule[], selector: string): string {
-    const cssContent = rules
-      .map((rule, index) => {
-        const fileName = rule.filePath.split(/[\\/]/).pop();
-        const relativePath = vscode.workspace.asRelativePath(rule.filePath);
-
-        return `
-                <div class="rule">
-                    <div class="rule-header">
-                        <span class="rule-number">Rule ${index + 1}</span>
-                        <span class="file-name">${fileName}</span>
-                    </div>
-                    <div class="rule-details">
-                        <div class="selector">${rule.selector}</div>
-                        <div class="properties">
-                            ${Object.entries(rule.properties)
-                              .map(
-                                ([prop, value]) => `
-                                    <div class="property">
-                                        <span class="property-name">${prop}:</span>
-                                        <span class="property-value">${value};</span>
-                                    </div>
-                                `
-                              )
-                              .join("")}
-                        </div>
-                    </div>
-                </div>
-            `;
-      })
-      .join("");
-
-    return `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body {
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                        margin: 0;
-                        padding: 20px;
-                        background-color: var(--vscode-editor-background);
-                        color: var(--vscode-editor-foreground);
-                    }
-                    .header {
-                        border-bottom: 1px solid var(--vscode-panel-border);
-                        padding-bottom: 15px;
-                        margin-bottom: 20px;
-                    }
-                    .header h1 {
-                        margin: 0;
-                        font-size: 18px;
-                        color: var(--vscode-editor-foreground);
-                    }
-                    .rule {
-                        background: var(--vscode-editor-background);
-                        border: 1px solid var(--vscode-panel-border);
-                        border-radius: 4px;
-                        padding: 15px;
-                        margin-bottom: 15px;
-                    }
-                    .rule-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 10px;
-                        padding-bottom: 8px;
-                        border-bottom: 1px solid var(--vscode-panel-border);
-                    }
-                    .rule-number {
-                        font-weight: bold;
-                        color: var(--vscode-button-background);
-                    }
-                    .file-name {
-                        font-size: 12px;
-                        color: var(--vscode-descriptionForeground);
-                    }
-                    .selector {
-                        font-family: 'Courier New', monospace;
-                        font-weight: bold;
-                        margin-bottom: 10px;
-                        color: var(--vscode-editor-foreground);
-                    }
-                    .properties {
-                        display: grid;
-                        gap: 4px;
-                    }
-                    .property {
-                        display: grid;
-                        grid-template-columns: 150px 1fr;
-                        gap: 10px;
-                        font-family: 'Courier New', monospace;
-                        font-size: 13px;
-                    }
-                    .property-name {
-                        color: var(--vscode-symbolIcon-classForeground);
-                    }
-                    .property-value {
-                        color: var(--vscode-editor-foreground);
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <h1>CSS Peak Pro - Rules for "${selector}"</h1>
-                    <p>Found ${rules.length} CSS rule(s):</p>
-                </div>
-                ${cssContent}
-            </body>
-            </html>
-        `;
   }
 }
