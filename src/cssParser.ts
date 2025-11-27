@@ -78,6 +78,7 @@ export class CSSParser {
             "src/styles",
             "src/css",
             "assets/css",
+            "static"
         ]);
         const fileNamePatterns: string[] = config.get("fileNamePatterns", [
             "${filename}",

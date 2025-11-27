@@ -2,7 +2,7 @@
   "name": "css-peak-pro",
   "displayName": "CSS Peak Pro",
   "description": "Enhanced CSS Peak extension with smart scoping that shows only relevant CSS for elements based on configurable modes - Smart, Global, Folder, or Filename matching",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "publisher": "DraconDev",
   "repository": {
     "type": "git",
@@ -100,7 +100,8 @@
             "styles",
             "src/styles",
             "src/css",
-            "assets/css"
+            "assets/css",
+            "static"
           ],
           "description": "📂 Common Directories: List of directory paths (relative to workspace root) to search for global styles in Smart mode"
         },
