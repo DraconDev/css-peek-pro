@@ -1,318 +1,217 @@
 # CSS Peak Pro
 
-An improved VSCode extension based on CSS Peak that provides smart CSS scoping and hover functionality.
+**Enhanced CSS navigation with smart scoping and customizable discovery modes**
 
-## Key Differences from CSS Peak
-
-### 🎯 Smart Scoping (Now Configurable!)
-
-**CSS Peak**: Shows ALL CSS rules across the entire workspace, making it difficult to find the relevant rules when you have multiple files with the same class names (e.g., 20+ `container` classes across different pages).
-
-**CSS Peak Pro**: Only shows CSS rules based on configurable scoping modes:
-
-### ⚙️ Scoping Modes
-
-1. **`smart`** (Default): Smart combination with fallback
-
-   - Same name files (e.g., `index.html` → `index.css`)
-   - Same folder CSS files
-   - Common directories (`css/`, `styles/`, `src/css/`, etc.)
-   - Fallback to global if no scoped files found
-
-2. **`global`**: Show all CSS files in workspace
-
-   - Searches entire directory tree
-   - Useful for debugging or seeing all styles
-
-3. **`folder`**: Same directory only
-
-   - Only CSS files in the current file's directory
-   - No subdirectory or global search
-
-4. **`filename`**: Same name, any extension
-   - Only CSS files with matching base name
-   - `hello.rs` → `hello.css`, `hello.scss`, `hello.sass`, etc.
-
-### 📱 Hover Support
-
-- **Inline hover** - Hover over class names, IDs, or HTML elements to see CSS properties
-- **Command-based viewing** - Select text and use `Ctrl+Shift+C` (Cmd+Shift+C on Mac) for detailed CSS display
-- **Webview display** - Rich, formatted CSS display in a separate panel
-
-### ⚙️ Configurable Settings
-
-```json
-{
-  "cssPeakPro.scopingMode": "smart", // smart, global, folder, filename
-  "cssPeakPro.cssFileExtensions": [
-    // Custom file extensions
-    "css",
-    "scss",
-    "sass",
-    "less"
-  ],
-  "cssPeakPro.enableHover": true, // Toggle hover functionality
-  "cssPeakPro.maxRulesToShow": 10, // Max rules to display
-  "cssPeakPro.enableFallbackToGlobal": true // Fallback when no scoped files
-}
-```
-
-## Installation
-
-### From Source
-
-1. Clone this repository
-2. Run `npm install`
-3. Run `npm run compile`
-4. Press `F5` in VSCode to open a new Extension Development Host window
-5. In the new window, run the extension from the Extension view
-
-### Development
-
-```bash
-npm install
-npm run compile
-# Press F5 in VSCode to start debugging
-```
-
-## Usage
-
-### Hover Functionality
-
-1. Open an HTML, JSX, TSX, or Vue file
-2. Hover over any of the following:
-   - Class names (`.my-class`)
-   - ID selectors (`#my-id`)
-   - HTML elements (`div`, `span`, `button`, etc.)
-   - React components (`MyComponent`)
-
-### Command Mode
-
-1. Select any text (class name, element, etc.)
-2. Press `Ctrl+Shift+C` (Cmd+Shift+C on Mac)
-3. Or run "CSS Peak Pro: Show CSS for this element" from the command palette
-4. A detailed panel will open showing all matching CSS rules
-
-### Configuration Examples
-
-#### Minimal Configuration (Global)
-
-```json
-{
-  "cssPeakPro.scopingMode": "global"
-}
-```
-
-#### Targeted Configuration (Filename)
-
-```json
-{
-  "cssPeakPro.scopingMode": "filename",
-  "cssPeakPro.cssFileExtensions": ["css", "scss"]
-}
-```
-
-#### Project-Specific Configuration (Smart)
-
-```json
-{
-  "cssPeakPro.scopingMode": "smart",
-  "cssPeakPro.enableFallbackToGlobal": false
-}
-```
-
-#### Custom File Types
-
-```json
-{
-  "cssPeakPro.cssFileExtensions": ["css", "scss", "sass", "less", "styl"]
-}
-```
-
-## Smart Scoping Examples
-
-### Scenario 1: Same Name Files (Smart Mode)
-
-```
-project/
-├── index.html
-├── index.css     ← Priority: HIGH (same name)
-├── about.html
-├── about.css     ← Priority: HIGH (same name)
-└── styles/
-    └── global.css ← Priority: MEDIUM (common directory)
-```
-
-When viewing `index.html`:
-
-- `index.css` rules are shown FIRST (same name, same folder)
-- `global.css` rules are shown AFTER (common directory)
-- `about.css` rules are NOT shown (different file, same priority but not matching)
-
-### Scenario 2: Folder Mode
-
-```
-components/
-├── button/
-│   ├── button.html
-│   ├── button.css  ← Priority: HIGH (same folder)
-│   └── styles.css  ← Priority: MEDIUM (same folder)
-└── styles/
-    └── global.css  ← Priority: LOW (different folder)
-```
-
-When viewing `button.html` (Folder Mode):
-
-- `button.css` and `styles.css` are shown (same folder only)
-- `global.css` is NOT shown (different folder)
-
-### Scenario 3: Filename Mode
-
-```
-src/
-├── hello.rs
-├── hello.css      ← Priority: HIGH (same name)
-├── hello.scss     ← Priority: MEDIUM (same name, different ext)
-└── styles.css     ← Priority: LOW (different name)
-```
-
-When viewing `hello.rs` (Filename Mode):
-
-- Only `hello.css` and `hello.scss` are shown
-- `styles.css` is NOT shown (different name)
-
-### Scenario 4: Global Mode
-
-```
-workspace/
-├── index.html
-├── about.html
-├── styles/
-│   ├── global.css
-│   └── layout.css
-└── components/
-    └── button.css
-```
-
-When viewing any HTML file (Global Mode):
-
-- ALL CSS files in workspace are shown
-- Useful for debugging or comprehensive analysis
+CSS Peak Pro is a powerful VSCode extension that helps you navigate between your HTML/JS/TS files and their CSS styling. Unlike the original CSS Peak, it uses smart scoping to show only relevant CSS rules, reducing noise in large projects.
 
 ## Features
 
-### ✅ What's Implemented
+### 🎯 Smart CSS Discovery
 
-- [x] Configurable scoping modes (smart, global, folder, filename)
-- [x] Customizable file extensions
-- [x] Hover support for classes, IDs, and elements
-- [x] Command-based CSS viewing with `Ctrl+Shift+C`
-- [x] Smart file scoping (same folder, same name, common directories)
-- [x] Multiple language support (HTML, JSX, TSX, Vue)
-- [x] Webview display for detailed CSS viewing
-- [x] Configuration options
-- [x] Status bar integration
-- [x] CSS caching for performance
-- [x] Fallback to global when no scoped files found
+-   **Hover** over any class, ID, or element to see its CSS properties
+-   **Ctrl+Click** to jump to the CSS definition
+-   **Find All References** (Shift+F12) from CSS files to see where selectors are used
 
-### 🌍 Supported Languages
+### 🧠 Intelligent Scoping Modes
 
-- HTML
-- React (JSX/TSX)
-- Vue.js
-- PHP (basic support)
-- And many more through configurable language list
+#### Smart Mode (Recommended)
 
-### 🔧 Supported File Types
+Finds CSS in this priority order:
 
-- CSS (.css)
-- SCSS (.scss)
-- SASS (.sass)
-- LESS (.less)
-- Stylus (.styl) - when added to extensions list
+1. Files matching your name patterns (e.g., `component.module.css` for `component.tsx`)
+2. All CSS files in the same folder
+3. CSS files in common directories (`css/`, `styles/`, `static/`, etc.)
+4. Falls back to global search if nothing found
 
-## Project Structure
+#### Other Modes
 
+-   **Global**: Search entire workspace
+-   **Folder**: Only CSS in the same directory
+-   **Filename**: Only files with matching base names
+
+### 🎨 Beautiful Hover Popups
+
+Clean, syntax-highlighted CSS display with proper grouping by file.
+
+### 🌍 Universal Language Support
+
+Works with HTML, React, Vue, Svelte, PHP, Rust templates, and many more - fully configurable!
+
+## Installation
+
+1. Download the latest `.vsix` from [Releases](https://github.com/DraconDev/css-peak-pro/releases)
+2. In VSCode: Extensions → `...` → Install from VSIX
+3. Or build from source: `npm install && npm run build`
+
+## Configuration
+
+All settings are under `CSS Peak Pro` in VSCode settings. Here are the key ones:
+
+### Discovery & Scoping
+
+**`cssPeakPro.scopingMode`** (default: `"smart"`)
+
+-   Choose how CSS files are discovered: `smart`, `global`, `folder`, or `filename`
+
+**`cssPeakPro.commonDirectories`** (default: `["css", "styles", "src/styles", "src/css", "assets/css", "static"]`)
+
+-   Directories to search for global styles in Smart mode
+-   Paths are relative to workspace root
+
+**`cssPeakPro.fileNamePatterns`** (default: `["${filename}", "${filename}.module", "${filename}.styles"]`)
+
+-   Patterns to match CSS files to source files
+-   `${filename}` is replaced with the file's base name
+-   Example: `component.tsx` will match `component.css`, `component.module.css`, `component.styles.css`
+
+**`cssPeakPro.cssFileExtensions`** (default: `["css", "scss", "sass", "less"]`)
+
+-   Which file extensions to treat as CSS
+
+### Language Support
+
+**`cssPeakPro.peekFromLanguages`** (default: includes HTML, JS, TS, React, Vue, Rust, etc.)
+
+-   VSCode language IDs where CSS peeking should work
+-   **You can add your own!** Just add the language ID to this array in settings
+
+### Behavior
+
+**`cssPeakPro.enableHover`** (default: `true`)
+
+-   Show CSS on hover
+
+**`cssPeakPro.hoverDelay`** (default: `300`ms)
+
+-   Delay before showing hover tooltip
+
+**`cssPeakPro.enableGoToDefinition`** (default: `true`)
+
+-   Enable Ctrl+Click go-to-definition
+
+**`cssPeakPro.enableFallbackToGlobal`** (default: `true`)
+
+-   Fall back to global search when no scoped CSS found
+
+**`cssPeakPro.maxRulesToShow`** (default: `10`)
+
+-   Maximum CSS rules to show in hover
+
+### Performance
+
+**`cssPeakPro.scanDepth`** (default: `10`)
+
+-   Maximum directory depth for scanning (1-20)
+
+**`cssPeakPro.excludeDirectories`** (default: `["node_modules", ".git", "target", "dist", "build", ".vscode"]`)
+
+-   Directories to skip when scanning
+
+## Usage Examples
+
+### Example 1: React with CSS Modules
+
+```tsx
+// Button.tsx
+export function Button() {
+    return <button className="primary">Click me</button>;
+}
 ```
-css-peak-pro/
-├── src/
-│   ├── extension.ts          # Main extension entry point
-│   ├── cssParser.ts         # CSS parsing with configurable scoping
-│   └── cssPeakProProvider.ts # Hover and command provider
-├── test-project/            # Test project for demonstration
-│   ├── index.html           # Test HTML file
-│   ├── index.css            # Same-name CSS (high priority)
-│   ├── about.html           # Another test file
-│   ├── about.css            # Another same-name CSS
-│   └── styles/
-│       ├── global.css       # Global styles (medium priority)
-│       └── components.css   # Component styles (medium priority)
-├── scripts/
-│   └── build.js            # Build automation
-├── test-scoping.js         # Scoping mode demonstration
-├── package.json             # Extension manifest
-└── README.md               # This documentation
+
+Hover over `"primary"` to see styles from:
+
+1. `Button.module.css` (if pattern `${filename}.module` is enabled)
+2. `Button.css`
+3. Any CSS in the same folder
+4. Common directories like `src/styles/`
+
+### Example 2: Custom Patterns
+
+Add to settings:
+
+```json
+{
+    "cssPeakPro.fileNamePatterns": [
+        "${filename}",
+        "${filename}.styles",
+        "${filename}-styles"
+    ]
+}
 ```
 
-## Testing the Extension
+Now `HomePage.tsx` will also check for `HomePage-styles.css`!
 
-1. **Open the test project**: Open the `test-project/` folder in VSCode
-2. **Test different scoping modes**:
-   - Try each scoping mode in settings
-   - Open `test-project/index.html` and observe different results
-   - Notice the difference between smart, folder, filename, and global modes
-3. **Test smart scoping**:
-   - Open `test-project/index.html` and hover over elements
-   - Notice it shows styles from `index.css` first
-   - Then styles from `styles/global.css` and `styles/components.css`
-4. **Test different files**:
-   - Open `test-project/about.html` and observe it shows styles from `about.css`
-5. **Test hover vs command**:
-   - Use hover for quick info
-   - Use `Ctrl+Shift+C` for detailed view
+### Example 3: Custom Common Directory
 
-## Configuration Reference
+```json
+{
+    "cssPeakPro.commonDirectories": [
+        "css",
+        "styles",
+        "public/stylesheets",
+        "client/themes"
+    ]
+}
+```
 
-| Setting                             | Type    | Default                           | Description                                               |
-| ----------------------------------- | ------- | --------------------------------- | --------------------------------------------------------- |
-| `cssPeakPro.scopingMode`            | string  | `"smart"`                         | CSS scoping mode: `smart`, `global`, `folder`, `filename` |
-| `cssPeakPro.cssFileExtensions`      | array   | `["css", "scss", "sass", "less"]` | Array of CSS file extensions to search for                |
-| `cssPeakPro.enableHover`            | boolean | `true`                            | Enable CSS hover functionality                            |
-| `cssPeakPro.maxRulesToShow`         | number  | `10`                              | Maximum number of CSS rules to display                    |
-| `cssPeakPro.showInStatusBar`        | boolean | `true`                            | Show CSS Peak Pro in status bar                           |
-| `cssPeakPro.enableFallbackToGlobal` | boolean | `true`                            | When no scoped CSS found, fall back to global files       |
+Smart mode will now also search these custom directories.
+
+### Example 4: Adding Language Support
+
+Want CSS peeking in your template language?
+
+```json
+{
+    "cssPeakPro.peekFromLanguages": [
+        "html",
+        "javascript",
+        "typescript",
+        "rust",
+        "myCustomLanguage" // ← Add your language ID here!
+    ]
+}
+```
+
+## Tips
+
+-   **Performance**: Use `folder` or `filename` mode for very large projects
+-   **Debugging**: Set `cssPeakPro.scopingMode` to `global` to see all available CSS
+-   **Precision**: Use `filename` mode for strict file-to-file matching
+-   **Flexibility**: Use `smart` mode (default) for the best balance
 
 ## Troubleshooting
 
-### Extension not showing CSS
+### No CSS showing on hover
 
-1. Check that the file is in a workspace (not just a folder)
+1. Check the file language matches one in `peekFromLanguages`
 2. Verify CSS files exist in expected locations
-3. Check VSCode output panel for error messages
-4. Ensure scoping mode matches your expectations
+3. Try `global` mode to see if CSS is found at all
 
-### Wrong CSS rules showing
+### Wrong CSS showing
 
-1. Check your `scopingMode` setting
-2. Verify CSS files are in expected locations for your mode
-3. Try different scoping modes to understand the behavior
-4. Restart VSCode to clear any caching issues
+1. Adjust your `scopingMode`
+2. Customize `fileNamePatterns` for your naming convention
+3. Update `commonDirectories` for your project structure
 
-### Performance Issues
+### Performance issues
 
-1. Use `filename` or `folder` mode for large projects
-2. Use `smart` mode with `enableFallbackToGlobal: false` for better performance
-3. Limit `cssFileExtensions` to only what you need
+1. Reduce `scanDepth`
+2. Add more directories to `excludeDirectories`
+3. Use `folder` or `filename` mode instead of `smart`
+
+## What's New in 2.0
+
+-   ✨ **HTML Peak**: Find where CSS selectors are used (Shift+F12 from CSS files)
+-   🎨 **Better Formatting**: Syntax-highlighted, clean hover popups
+-   🔧 **Configurable Patterns**: `fileNamePatterns` and `commonDirectories` settings
+-   🐛 **Fixed Selector Matching**: No-prefix classes now work (e.g., hovering `container` finds `.container`)
+-   📦 **Smaller Package**: Reduced from 10MB to 1.4MB
+-   ⚡ **Related Rules**: Automatically includes pseudo-classes (`:hover`, `:focus`, etc.)
 
 ## Contributing
 
-This extension is designed to be easily extensible. Key areas for improvement:
-
-- Support for more CSS frameworks and naming conventions
-- Better selector matching algorithms
-- Integration with CSS preprocessors
-- Theme customization options
+Found a bug or want a feature? [Open an issue](https://github.com/DraconDev/css-peak-pro/issues)!
 
 ## License
 
-MIT License - feel free to use and modify for your needs.
+MIT - Feel free to use and modify for your needs.

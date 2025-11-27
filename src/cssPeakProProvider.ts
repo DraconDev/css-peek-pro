@@ -90,24 +90,30 @@ export class CSSPeakProProvider implements vscode.HoverProvider {
 
         content.appendText(`CSS Rules for "${selector}":\n\n`);
 
-        rules.forEach((rule, index) => {
-            const fileName = rule.filePath.split(/[\\/]/).pop();
-            // Fancy header with file icon and name in bold
-            content.appendText(`___\n`);
-            content.appendText(`### 🎨 **${fileName}**\n`);
-
-            // Create a CSS block for the rule
-            let cssBlock = `${rule.selector} {\n`;
-            Object.entries(rule.properties).forEach(([property, value]) => {
-                cssBlock += `  ${property}: ${value};\n`;
-            });
-            cssBlock += `}`;
-
-            content.appendCodeblock(cssBlock, "css");
+        // Group rules by file
+        const rulesByFile = new Map<string, CSSRule[]>();
+        rules.forEach((rule) => {
+            const fileName = rule.filePath.split(/[\\/]/).pop() || "unknown";
+            if (!rulesByFile.has(fileName)) {
+                rulesByFile.set(fileName, []);
+            }
+            rulesByFile.get(fileName)!.push(rule);
         });
 
-        content.appendText(`___\n`);
-        content.appendText(`_CSS Peak Pro_ $(telescope)`);
+        // Display each file's rules
+        rulesByFile.forEach((fileRules, fileName) => {
+            content.appendText(`**${fileName}**\n\n`);
+
+            fileRules.forEach((rule) => {
+                let cssBlock = `${rule.selector} {\n`;
+                Object.entries(rule.properties).forEach(([property, value]) => {
+                    cssBlock += `  ${property}: ${value};\n`;
+                });
+                cssBlock += `}`;
+
+                content.appendCodeblock(cssBlock, "css");
+            });
+        });
 
         return content;
     }
