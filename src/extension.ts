@@ -51,35 +51,14 @@ export function activate(context: vscode.ExtensionContext) {
       );
   }
 
-  // Register the command
-  const command = vscode.commands.registerCommand("cssPeakPro.showCSS", () => {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      vscode.window.showErrorMessage("No active editor found");
-      return;
-    }
-
-    const document = editor.document;
-    const selection = editor.selection;
-
-    const text = document.getText(selection);
-    if (!text) {
-      vscode.window.showWarningMessage("No text selected");
-      return;
-    }
-
-    hoverProvider.showCSSForSelection(text, selection.start);
-  });
-
   // Add disposables to context
   context.subscriptions.push(hoverProviderRegistration);
   if (definitionProviderRegistration) {
     context.subscriptions.push(definitionProviderRegistration);
   }
-  context.subscriptions.push(command);
 
   // Initialize configuration and watch for changes
-  const showInStatusBar = config.get("showInStatusBar", true);
+  const showInStatusBar = config.get("showInStatusBar", false);
 
   if (showInStatusBar) {
     // Add status bar item
@@ -87,9 +66,9 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.StatusBarAlignment.Right,
       100
     );
-    statusBarItem.command = "cssPeakPro.showCSS";
     statusBarItem.text = "$(paintcan) CSS Peak Pro";
-    statusBarItem.tooltip = "Click to show CSS for selected element";
+    statusBarItem.tooltip =
+      "CSS Peak Pro - Enhanced CSS navigation with smart scoping";
     statusBarItem.show();
     context.subscriptions.push(statusBarItem);
   }
