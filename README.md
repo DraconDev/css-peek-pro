@@ -70,10 +70,34 @@ All settings are under `CSS Peak Pro` in VSCode settings. Here are the key ones:
 
 ### Language Support
 
-**`cssPeakPro.peekFromLanguages`** (default: includes HTML, JS, TS, React, Vue, Rust, etc.)
+**`cssPeakPro.peekFromLanguages`**
 
--   VSCode language IDs where CSS peeking should work
--   **You can add your own!** Just add the language ID to this array in settings
+-   **Default includes**: HTML, JavaScript, TypeScript, React, Vue, Rust, PHP, and many more
+-   **🎯 FULLY CUSTOMIZABLE!** Add any language you want:
+    1. Open VSCode Settings (`Ctrl+,`)
+    2. Search for "CSS Peak Pro: Peek From Languages"
+    3. Click "Edit in settings.json"
+    4. Add your language ID to the array (e.g., `"go"`, `"zig"`, `"ruby"`)
+
+**Finding Language IDs:**
+
+-   Open a file in the target language
+-   Run command: `Developer: Inspect Editor Tokens and Scopes`
+-   Look for the `language` field in the output
+
+**Example - Adding Go:**
+
+```json
+{
+    "cssPeakPro.peekFromLanguages": [
+        "html",
+        "javascript",
+        "typescript",
+        "rust",
+        "go" // ← Just add it here!
+    ]
+}
+```
 
 ### Behavior
 
