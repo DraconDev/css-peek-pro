@@ -11,6 +11,7 @@ CSS Peak Pro is a powerful VSCode extension that helps you navigate between your
 -   **Hover** over any class, ID, or element to see its CSS properties
 -   **Ctrl+Click** to jump to the CSS definition
 -   **Find All References** (Shift+F12) from CSS files to see where selectors are used
+-   **Smart Import Detection** - Automatically finds CSS linked via `<link>` tags in HTML or `import`/`require` statements in JS/TS
 
 ### 🧠 Intelligent Scoping Modes
 
@@ -18,10 +19,11 @@ CSS Peak Pro is a powerful VSCode extension that helps you navigate between your
 
 Finds CSS in this priority order:
 
-1. Files matching your name patterns (e.g., `component.module.css` for `component.tsx`)
-2. All CSS files in the same folder
-3. CSS files in common directories (`css/`, `styles/`, `static/`, etc.)
-4. Falls back to global search if nothing found
+1. **Explicitly linked files** (NEW!) - Checks `<link>` tags in HTML or `import`/`require` in JS/TS
+2. Files matching your name patterns (e.g., `component.module.css` for `component.tsx`)
+3. All CSS files in the same folder
+4. CSS files in common directories (`css/`, `styles/`, `static/`, etc.)
+5. Falls back to global search if nothing found
 
 #### Other Modes
 
