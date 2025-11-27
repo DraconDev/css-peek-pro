@@ -1,14 +1,23 @@
 {
   "name": "css-peak-pro",
   "displayName": "CSS Peak Pro",
-  "description": "An improved CSS Peak extension with smart scoping that only shows CSS for elements in the same folder or with matching file names",
-  "version": "1.0.0",
-  "publisher": "your-publisher-name",
+  "description": "Enhanced CSS Peak extension with smart scoping that shows only relevant CSS for elements based on configurable modes - Smart, Global, Folder, or Filename matching",
+  "version": "1.0.1",
+  "publisher": "DraconDev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DraconDev/css-peak-pro.git"
+  },
+  "homepage": "https://github.com/DraconDev/css-peak-pro",
+  "bugs": {
+    "url": "https://github.com/DraconDev/css-peak-pro/issues"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Extension Packs"
   ],
   "activationEvents": [
     "onCommand:cssPeakPro.showCSS",
@@ -35,33 +44,18 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "CSS Peak Pro",
+      "title": "CSS Peak Pro Settings",
       "properties": {
-        "cssPeakPro.showInStatusBar": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show CSS info in status bar"
-        },
-        "cssPeakPro.maxRulesToShow": {
-          "type": "number",
-          "default": 10,
-          "description": "Maximum number of CSS rules to show in hover"
-        },
-        "cssPeakPro.enableHover": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable CSS hover functionality"
-        },
         "cssPeakPro.scopingMode": {
           "type": "string",
           "enum": [
+            "smart",
             "global",
             "folder",
-            "filename",
-            "smart"
+            "filename"
           ],
           "default": "smart",
-          "description": "CSS scoping mode: global (all files), folder (same directory), filename (same name, any extension), smart (combination with fallback)"
+          "description": "🎯 Scoping Mode: Choose how CSS files are discovered\n• Smart: Smart combination with fallback (recommended)\n• Global: Search entire workspace\n• Folder: Same directory only\n• Filename: Same name files (any extension)"
         },
         "cssPeakPro.cssFileExtensions": {
           "type": "array",
@@ -71,12 +65,27 @@
             "sass",
             "less"
           ],
-          "description": "Array of CSS file extensions to search for"
+          "description": "📁 CSS File Extensions: Which file types to search for\nEnter extensions without the dot, separated by commas\nExample: css,scss,sass,less,styl"
+        },
+        "cssPeakPro.enableHover": {
+          "type": "boolean",
+          "default": true,
+          "description": "🖱️ Enable Hover: Show CSS properties when hovering over elements, classes, and IDs"
+        },
+        "cssPeakPro.maxRulesToShow": {
+          "type": "number",
+          "default": 10,
+          "description": "📊 Max Rules Display: Maximum number of CSS rules to show in hover tooltip (recommended: 5-15)"
         },
         "cssPeakPro.enableFallbackToGlobal": {
           "type": "boolean",
           "default": true,
-          "description": "When no scoped CSS found, fall back to showing global CSS files"
+          "description": "🔄 Fallback to Global: When no scoped CSS files found, fall back to searching the entire workspace"
+        },
+        "cssPeakPro.showInStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "📍 Status Bar: Show CSS Peak Pro indicator in the status bar for quick access"
         }
       }
     }
@@ -105,6 +114,29 @@
     "smart-scoping",
     "html",
     "react",
-    "vue"
+    "vue",
+    "css-peak",
+    "scoped-css",
+    "css-navigation",
+    "frontend",
+    "web-development"
+  ],
+  "license": "MIT",
+  "icon": "css_peek_icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "badges": [
+    {
+      "url": "https://img.shields.io/github/v/release/DraconDev/css-peak-pro",
+      "href": "https://github.com/DraconDev/css-peak-pro/releases",
+      "description": "Latest Release"
+    },
+    {
+      "url": "https://img.shields.io/github/issues/DraconDev/css-peak-pro",
+      "href": "https://github.com/DraconDev/css-peak-pro/issues",
+      "description": "Issues"
+    }
   ]
 }

@@ -81,3 +81,12 @@ public
 # Temporary folders
 tmp/
 temp/
+
+# Auto-committer ignored files
+*.tmp
+*.temp
+*.cache
+*.dll
+*.exe
+*.env
+*.kilocode
