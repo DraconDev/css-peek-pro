@@ -1,17 +1,17 @@
-# CSS Peak Pro
+# CSS Peek Pro
 
 **Enhanced CSS navigation with smart scoping and customizable discovery modes**
 
-CSS Peak Pro is a powerful VSCode extension that helps you navigate between your HTML/JS/TS files and their CSS styling. Unlike the original CSS Peak, it uses smart scoping to show only relevant CSS rules, reducing noise in large projects.
+CSS Peek Pro is a powerful VSCode extension that helps you navigate between your HTML/JS/TS files and their CSS styling. Unlike the original CSS Peek, it uses smart scoping to show only relevant CSS rules, reducing noise in large projects.
 
 ## Features
 
 ### 🎯 Smart CSS Discovery
 
--   **Hover** over any class, ID, or element to see its CSS properties
--   **Ctrl+Click** to jump to the CSS definition
--   **Find All References** (Shift+F12) from CSS files to see where selectors are used
--   **Smart Import Detection** - Automatically finds CSS linked via `<link>` tags in HTML or `import`/`require` statements in JS/TS
+- **Hover** over any class, ID, or element to see its CSS properties
+- **Ctrl+Click** to jump to the CSS definition
+- **Find All References** (Shift+F12) from CSS files to see where selectors are used
+- **Smart Import Detection** - Automatically finds CSS linked via `<link>` tags in HTML or `import`/`require` statements in JS/TS
 
 ### 🧠 Intelligent Scoping Modes
 
@@ -27,9 +27,9 @@ Finds CSS in this priority order:
 
 #### Other Modes
 
--   **Global**: Search entire workspace
--   **Folder**: Only CSS in the same directory
--   **Filename**: Only files with matching base names
+- **Global**: Search entire workspace
+- **Folder**: Only CSS in the same directory
+- **Filename**: Only files with matching base names
 
 ### 🎨 Beautiful Hover Popups
 
@@ -47,57 +47,57 @@ Works with HTML, React, Vue, Svelte, PHP, Rust templates, and many more - fully 
 
 ## Configuration
 
-All settings are under `CSS Peak Pro` in VSCode settings. Here are the key ones:
+All settings are under `CSS Peek Pro` in VSCode settings. Here are the key ones:
 
 ### Discovery & Scoping
 
 **`cssPeakPro.scopingMode`** (default: `"smart"`)
 
--   Choose how CSS files are discovered: `smart`, `global`, `folder`, or `filename`
+- Choose how CSS files are discovered: `smart`, `global`, `folder`, or `filename`
 
 **`cssPeakPro.commonDirectories`** (default: `["css", "styles", "src/styles", "src/css", "assets/css", "static"]`)
 
--   Directories to search for global styles in Smart mode
--   Paths are relative to workspace root
+- Directories to search for global styles in Smart mode
+- Paths are relative to workspace root
 
 **`cssPeakPro.fileNamePatterns`** (default: `["${filename}", "${filename}.module", "${filename}.styles"]`)
 
--   Patterns to match CSS files to source files
--   `${filename}` is replaced with the file's base name
--   Example: `component.tsx` will match `component.css`, `component.module.css`, `component.styles.css`
+- Patterns to match CSS files to source files
+- `${filename}` is replaced with the file's base name
+- Example: `component.tsx` will match `component.css`, `component.module.css`, `component.styles.css`
 
 **`cssPeakPro.cssFileExtensions`** (default: `["css", "scss", "sass", "less"]`)
 
--   Which file extensions to treat as CSS
+- Which file extensions to treat as CSS
 
 ### Language Support
 
 **`cssPeakPro.peekFromLanguages`**
 
--   **Default includes**: HTML, JavaScript, TypeScript, React, Vue, Rust, PHP, and many more
--   **🎯 FULLY CUSTOMIZABLE!** Add any language you want:
-    1. Open VSCode Settings (`Ctrl+,`)
-    2. Search for "CSS Peak Pro: Peek From Languages"
-    3. Click "Edit in settings.json"
-    4. Add your language ID to the array (e.g., `"go"`, `"zig"`, `"ruby"`)
+- **Default includes**: HTML, JavaScript, TypeScript, React, Vue, Rust, PHP, and many more
+- **🎯 FULLY CUSTOMIZABLE!** Add any language you want:
+  1. Open VSCode Settings (`Ctrl+,`)
+  2. Search for "CSS Peek Pro: Peek From Languages"
+  3. Click "Edit in settings.json"
+  4. Add your language ID to the array (e.g., `"go"`, `"zig"`, `"ruby"`)
 
 **Finding Language IDs:**
 
--   Open a file in the target language
--   Run command: `Developer: Inspect Editor Tokens and Scopes`
--   Look for the `language` field in the output
+- Open a file in the target language
+- Run command: `Developer: Inspect Editor Tokens and Scopes`
+- Look for the `language` field in the output
 
 **Example - Adding Go:**
 
 ```json
 {
-    "cssPeakPro.peekFromLanguages": [
-        "html",
-        "javascript",
-        "typescript",
-        "rust",
-        "go" // ← Just add it here!
-    ]
+  "cssPeakPro.peekFromLanguages": [
+    "html",
+    "javascript",
+    "typescript",
+    "rust",
+    "go" // ← Just add it here!
+  ]
 }
 ```
 
@@ -105,33 +105,33 @@ All settings are under `CSS Peak Pro` in VSCode settings. Here are the key ones:
 
 **`cssPeakPro.enableHover`** (default: `true`)
 
--   Show CSS on hover
+- Show CSS on hover
 
 **`cssPeakPro.hoverDelay`** (default: `300`ms)
 
--   Delay before showing hover tooltip
+- Delay before showing hover tooltip
 
 **`cssPeakPro.enableGoToDefinition`** (default: `true`)
 
--   Enable Ctrl+Click go-to-definition
+- Enable Ctrl+Click go-to-definition
 
 **`cssPeakPro.enableFallbackToGlobal`** (default: `true`)
 
--   Fall back to global search when no scoped CSS found
+- Fall back to global search when no scoped CSS found
 
 **`cssPeakPro.maxRulesToShow`** (default: `10`)
 
--   Maximum CSS rules to show in hover
+- Maximum CSS rules to show in hover
 
 ### Performance
 
 **`cssPeakPro.scanDepth`** (default: `10`)
 
--   Maximum directory depth for scanning (1-20)
+- Maximum directory depth for scanning (1-20)
 
 **`cssPeakPro.excludeDirectories`** (default: `["node_modules", ".git", "target", "dist", "build", ".vscode"]`)
 
--   Directories to skip when scanning
+- Directories to skip when scanning
 
 ## Usage Examples
 
@@ -140,12 +140,12 @@ All settings are under `CSS Peak Pro` in VSCode settings. Here are the key ones:
 ```html
 <!-- index.html -->
 <html>
-    <head>
-        <link rel="stylesheet" href="theme.css" />
-    </head>
-    <body>
-        <button class="primary">Click me</button>
-    </body>
+  <head>
+    <link rel="stylesheet" href="theme.css" />
+  </head>
+  <body>
+    <button class="primary">Click me</button>
+  </body>
 </html>
 ```
 
@@ -158,7 +158,7 @@ This also works with JS/TS imports:
 import "./Button.styles.css";
 
 export function Button() {
-    return <button className="primary">Click me</button>;
+  return <button className="primary">Click me</button>;
 }
 ```
 
@@ -167,7 +167,7 @@ export function Button() {
 ```tsx
 // Button.tsx
 export function Button() {
-    return <button className="primary">Click me</button>;
+  return <button className="primary">Click me</button>;
 }
 ```
 
@@ -185,11 +185,11 @@ Add to settings:
 
 ```json
 {
-    "cssPeakPro.fileNamePatterns": [
-        "${filename}",
-        "${filename}.styles",
-        "${filename}-styles"
-    ]
+  "cssPeakPro.fileNamePatterns": [
+    "${filename}",
+    "${filename}.styles",
+    "${filename}-styles"
+  ]
 }
 ```
 
@@ -199,12 +199,12 @@ Now `HomePage.tsx` will also check for `HomePage-styles.css`!
 
 ```json
 {
-    "cssPeakPro.commonDirectories": [
-        "css",
-        "styles",
-        "public/stylesheets",
-        "client/themes"
-    ]
+  "cssPeakPro.commonDirectories": [
+    "css",
+    "styles",
+    "public/stylesheets",
+    "client/themes"
+  ]
 }
 ```
 
@@ -212,10 +212,10 @@ Smart mode will now also search these custom directories.
 
 ## Tips
 
--   **Performance**: Use `folder` or `filename` mode for very large projects
--   **Debugging**: Set `cssPeakPro.scopingMode` to `global` to see all available CSS
--   **Precision**: Use `filename` mode for strict file-to-file matching
--   **Flexibility**: Use `smart` mode (default) for the best balance
+- **Performance**: Use `folder` or `filename` mode for very large projects
+- **Debugging**: Set `cssPeakPro.scopingMode` to `global` to see all available CSS
+- **Precision**: Use `filename` mode for strict file-to-file matching
+- **Flexibility**: Use `smart` mode (default) for the best balance
 
 ## Troubleshooting
 
@@ -239,13 +239,13 @@ Smart mode will now also search these custom directories.
 
 ## What's New in 2.0
 
--   ✨ **HTML Peak**: Find where CSS selectors are used (Shift+F12 from CSS files)
--   🎯 **Smart Import Detection**: Automatically prioritizes CSS files you actually import/link
--   🎨 **Better Formatting**: Clean, syntax-highlighted hover popups
--   🔧 **Configurable Patterns**: `fileNamePatterns` and `commonDirectories` settings
--   🐛 **Fixed Selector Matching**: No-prefix classes now work (e.g., hovering `container` finds `.container`)
--   📦 **Smaller Package**: Reduced from 10MB to 1.4MB
--   ⚡ **Related Rules**: Automatically includes pseudo-classes (`:hover`, `:focus`, etc.)
+- ✨ **HTML Peek**: Find where CSS selectors are used (Shift+F12 from CSS files)
+- 🎯 **Smart Import Detection**: Automatically prioritizes CSS files you actually import/link
+- 🎨 **Better Formatting**: Clean, syntax-highlighted hover popups
+- 🔧 **Configurable Patterns**: `fileNamePatterns` and `commonDirectories` settings
+- 🐛 **Fixed Selector Matching**: No-prefix classes now work (e.g., hovering `container` finds `.container`)
+- 📦 **Smaller Package**: Reduced from 10MB to 1.4MB
+- ⚡ **Related Rules**: Automatically includes pseudo-classes (`:hover`, `:focus`, etc.)
 
 ## Contributing
 

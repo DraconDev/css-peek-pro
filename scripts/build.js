@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Build script for CSS Peak Pro
+ * Build script for CSS Peek Pro
  * Compiles TypeScript, copies assets, and prepares for packaging
  */
 
@@ -9,7 +9,7 @@ const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
-console.log("🚀 Starting CSS Peak Pro build process...\n");
+console.log("🚀 Starting CSS Peek Pro build process...\n");
 
 // Step 1: Clean previous build
 console.log("📁 Cleaning previous build...");
@@ -64,7 +64,7 @@ console.log(`   Version: ${packageInfo.version}`);
 console.log(`   Build Time: ${packageInfo.buildTime}`);
 console.log(`   Output Directory: out/`);
 
-console.log("\n🎉 CSS Peak Pro build completed successfully!");
+console.log("\n🎉 CSS Peek Pro build completed successfully!");
 console.log("\n📋 Next steps:");
 console.log("   1. Open VSCode Extension Development Host: Press F5");
 console.log("   2. Test the extension with test-project/ files");

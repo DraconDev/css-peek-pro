@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to CSS Peak Pro will be documented in this file.
+All notable changes to CSS Peek Pro will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -9,13 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Smart CSS Scoping**: Only shows CSS from same folder or matching file names (improvement over CSS Peak)
+- **Smart CSS Scoping**: Only shows CSS from same folder or matching file names (improvement over CSS Peek)
 - **Hover Support**: Hover over classes, IDs, and elements to see CSS properties inline
 - **Command-based Viewing**: Select text and press `Ctrl+Shift+C` for detailed CSS display
 - **Webview Display**: Rich, formatted CSS display in separate panels
 - **Multi-language Support**: HTML, JSX, TSX, Vue.js, and more
 - **Configurable Settings**: Toggle hover, set max rules, show/hide status bar
-- **Status Bar Integration**: Quick access to CSS Peak Pro features
+- **Status Bar Integration**: Quick access to CSS Peek Pro features
 - **Performance Optimized**: CSS parsing with caching for better performance
 
 ### Features
@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Efficient file system scanning with caching
 - Cross-platform compatibility (Windows, macOS, Linux)
 
-### Improvements over CSS Peak
+### Improvements over CSS Peek
 
 - **Smart Scoping**: No more confusion from 20+ container classes across projects
 - **Better Performance**: Cached parsing reduces file system calls

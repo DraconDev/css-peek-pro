@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 // Simple test to verify CSS parsing and scoping logic
-console.log("Testing CSS Peak Pro functionality...\n");
+console.log("Testing CSS Peek Pro functionality...\n");
 
 // Test CSS parsing
 const sampleCSS = `
@@ -77,4 +77,4 @@ console.log(`1. Same name in same folder: ${fileName}.css, ${fileName}.scss`);
 console.log(`2. Same folder any CSS: *.css, *.scss in ${currentDir}`);
 console.log(`3. Common directories: css/, styles/, src/styles/, etc.`);
 
-console.log("\nCSS Peak Pro test completed successfully! ✅");
+console.log("\nCSS Peek Pro test completed successfully! ✅");

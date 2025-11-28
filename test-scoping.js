@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-// Test file to demonstrate CSS Peak Pro scoping modes
-console.log("Testing CSS Peak Pro Scoping Modes...\n");
+// Test file to demonstrate CSS Peek Pro scoping modes
+console.log("Testing CSS Peek Pro Scoping Modes...\n");
 
 console.log("🎯 Available Scoping Modes:");
 console.log("1. smart (default) - Smart combination with fallback");

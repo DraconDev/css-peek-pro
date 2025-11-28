@@ -1,16 +1,16 @@
-# CSS Peak Pro - Final Summary 🎉
+# CSS Peek Pro - Final Summary 🎉
 
 ## ✅ Complete VSCode Extension with Enhanced UI
 
-### 🎯 Key Improvements Over Original CSS Peak
+### 🎯 Key Improvements Over Original CSS Peek
 
-**The Problem CSS Peak Solves:**
+**The Problem CSS Peek Solves:**
 
 - Shows ALL CSS rules across entire workspace
 - When you have 20+ "container" classes across different pages, it's impossible to find the right one
 - No smart scoping or prioritization
 
-**CSS Peak Pro Solution:**
+**CSS Peek Pro Solution:**
 
 - **Configurable scoping modes** - Choose how aggressive the search should be
 - **Smart prioritization** - Shows relevant CSS files first
@@ -19,10 +19,10 @@
 
 ### 🎨 Enhanced Settings Panel UI
 
-When users open VSCode Settings and search for "CSS Peak Pro", they now see:
+When users open VSCode Settings and search for "CSS Peek Pro", they now see:
 
 ```
-CSS Peak Pro Settings
+CSS Peek Pro Settings
 
 🎯 Scoping Mode
 • Smart: Smart combination with fallback (recommended)
@@ -58,7 +58,7 @@ CSS Peak Pro Settings
 
 2. **Global** - Search everything
 
-   - Like original CSS Peak
+   - Like original CSS Peek
    - Useful for debugging
 
 3. **Folder** - Same directory only
@@ -149,9 +149,9 @@ web/
 
 ### 🏁 Final Result
 
-**CSS Peak Pro** is now a complete, production-ready VSCode extension that:
+**CSS Peek Pro** is now a complete, production-ready VSCode extension that:
 
-- Solves the core problem of CSS Peak (overwhelming global search)
+- Solves the core problem of CSS Peek (overwhelming global search)
 - Provides an intuitive, beautiful settings interface
 - Offers 4 different scoping modes for different workflows
 - Maintains backward compatibility while being significantly better

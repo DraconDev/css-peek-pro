@@ -1,8 +1,8 @@
 {
   "name": "css-peek-pro",
-  "displayName": "CSS Peak Pro",
-  "description": "Enhanced CSS Peak extension with smart scoping that shows only relevant CSS for elements based on configurable modes - Smart, Global, Folder, or Filename matching",
-  "version": "1.1.23",
+  "displayName": "CSS Peek Pro",
+  "description": "Enhanced CSS Peek extension with smart scoping that shows only relevant CSS for elements based on configurable modes - Smart, Global, Folder, or Filename matching",
+  "version": "1.1.25",
   "publisher": "DraconDev",
   "repository": {
     "type": "git",
@@ -30,12 +30,12 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "CSS Peak Pro Settings",
+      "title": "CSS Peek Pro Settings",
       "properties": {
         "cssPeakPro.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "🎯 Enable CSS Peak Pro: Turn on/off the extension functionality"
+          "description": "🎯 Enable CSS Peek Pro: Turn on/off the extension functionality"
         },
         "cssPeakPro.peekFromLanguages": {
           "type": "array",
@@ -65,7 +65,7 @@
             "svelte",
             "rust"
           ],
-          "description": "🔤 Supported Languages: VSCode language IDs where CSS peeking works\n\nYOU CAN ADD YOUR OWN! To add support for Go, Zig, or any language:\n1. Open VSCode Settings (Ctrl+,)\n2. Search for 'CSS Peak Pro: Peek From Languages'\n3. Click 'Edit in settings.json'\n4. Add your language ID (e.g., 'go', 'zig', 'ruby')\n\nTo find a language ID: open a file in that language, run 'Developer: Inspect Editor Tokens and Scopes' from command palette, and look at the 'language' field."
+          "description": "🔤 Supported Languages: VSCode language IDs where CSS peeking works\n\nYOU CAN ADD YOUR OWN! To add support for Go, Zig, or any language:\n1. Open VSCode Settings (Ctrl+,)\n2. Search for 'CSS Peek Pro: Peek From Languages'\n3. Click 'Edit in settings.json'\n4. Add your language ID (e.g., 'go', 'zig', 'ruby')\n\nTo find a language ID: open a file in that language, run 'Developer: Inspect Editor Tokens and Scopes' from command palette, and look at the 'language' field."
         },
         "cssPeakPro.supportTags": {
           "type": "boolean",
@@ -149,7 +149,7 @@
         "cssPeakPro.enableGoToDefinition": {
           "type": "boolean",
           "default": true,
-          "description": "🎯 Go to Definition: Enable Ctrl+Click go-to-definition for CSS selectors (like original CSS Peak)"
+          "description": "🎯 Go to Definition: Enable Ctrl+Click go-to-definition for CSS selectors (like original CSS Peek)"
         },
         "cssPeakPro.maxRulesToShow": {
           "type": "number",
